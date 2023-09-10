@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 //MongoDB connection URI
-const dbURI = "mongodb://localhost:27017/your-database-name";
+const dbURI = "mongodb://localhost:27017/socialAPI";
 
 // Mongoose connection options
 const options = {

@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // Add more fields as needed, e.g., profile picture, bio, etc.
+
   friends: [
     {
       type: mongoose.Schema.Types.ObjectId,
