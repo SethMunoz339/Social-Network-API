@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
 
 const reactionSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Reference to the User model
+  user: {
+    type: String, // Change this to store the username as a string
     required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now, // Set the default value to the current date and time
   },
   thoughtId: {
     type: mongoose.Schema.Types.ObjectId,
