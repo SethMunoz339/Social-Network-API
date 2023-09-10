@@ -23,18 +23,29 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// Get all users
+// Get all users with friendCount
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
-    res.status(200).json(users);
+
+    // Calculate friendCount for each user
+    const usersWithFriendCount = await Promise.all(
+      users.map(async (user) => {
+        const friendCount = user.friends.length;
+        const userObject = user.toObject(); // Convert to plain JavaScript object
+        userObject.friendCount = friendCount;
+        return userObject;
+      })
+    );
+
+    res.status(200).json(usersWithFriendCount);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// Get a single user by ID
+// Get a single user by ID with friendCount
 exports.getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -44,7 +55,12 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json(user);
+    // Calculate friendCount for the user
+    const friendCount = user.friends.length;
+    const userObject = user.toObject(); // Convert to plain JavaScript object
+    userObject.friendCount = friendCount;
+
+    res.status(200).json(userObject);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

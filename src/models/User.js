@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    trim: true, // Remove whitespace from both ends of a string
   },
   email: {
     type: String,
@@ -23,7 +24,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
+  thoughts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Thought", // Reference to the Thought model for managing thoughts
+    },
+  ],
   friends: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -32,6 +38,10 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
+// virtual friendCount
+userSchema.virtual("friendCount").get(function () {
+  return this.friends.length;
+});
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

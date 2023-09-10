@@ -1,4 +1,5 @@
 const Thought = require("../models/Thought");
+
 // Create a new thought
 exports.createThought = async (req, res) => {
   try {
@@ -15,18 +16,29 @@ exports.createThought = async (req, res) => {
   }
 };
 
-// Get all thoughts
+// Get all thoughts with thoughtCount
 exports.getAllThoughts = async (req, res) => {
   try {
     const thoughts = await Thought.find().populate("user");
-    res.status(200).json(thoughts);
+
+    // Calculate thoughtCount for each thought
+    const thoughtsWithCount = await Promise.all(
+      thoughts.map(async (thought) => {
+        const thoughtCount = thought.reactionCount;
+        const thoughtObject = thought.toObject(); // Convert to plain JavaScript object
+        thoughtObject.thoughtCount = thoughtCount;
+        return thoughtObject;
+      })
+    );
+
+    res.status(200).json(thoughtsWithCount);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// Get a single thought by ID
+// Get a single thought by ID with thoughtCount
 exports.getThoughtById = async (req, res) => {
   try {
     const { thoughtId } = req.params;
@@ -36,7 +48,12 @@ exports.getThoughtById = async (req, res) => {
       return res.status(404).json({ message: "Thought not found" });
     }
 
-    res.status(200).json(thought);
+    // Calculate thoughtCount for the thought
+    const thoughtCount = thought.reactionCount;
+    const thoughtObject = thought.toObject(); // Convert to plain JavaScript object
+    thoughtObject.thoughtCount = thoughtCount;
+
+    res.status(200).json(thoughtObject);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
